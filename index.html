@@ -1,0 +1,734 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        
+            <script src="lib/bindings/utils.js"></script>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/dist/vis-network.min.css" integrity="sha512-WgxfT5LWjfszlPHXRmBWHkV2eceiWTOBvrKCNbdgDYTHrT2AeLCGbF4sZlZw3UMN3WtL0tGUoIAKsu8mllg/XA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/dist/vis-network.min.js" integrity="sha512-LnvoEWDFrqGHlHmDD2101OrLcbsfkrzoSpvtSQtxK3RMnRV0eOkhhBN2dXHKRrUU8p2DGRTk35n4O8nWSVe1mQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            
+                <link href="lib/tom-select/tom-select.css" rel="stylesheet">
+                <script src="lib/tom-select/tom-select.complete.min.js"></script>
+            
+        
+<center>
+<h1></h1>
+</center>
+
+<!-- <link rel="stylesheet" href="../node_modules/vis/dist/vis.min.css" type="text/css" />
+<script type="text/javascript" src="../node_modules/vis/dist/vis.js"> </script>-->
+        <link
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css"
+          rel="stylesheet"
+          integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6"
+          crossorigin="anonymous"
+        />
+        <script
+          src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf"
+          crossorigin="anonymous"
+        ></script>
+
+
+        <center>
+          <h1></h1>
+        </center>
+        <style type="text/css">
+
+             #mynetwork {
+                 width: 100%;
+                 height: 100vh;
+                 background-color: #111111;
+                 border: 1px solid lightgray;
+                 position: relative;
+                 float: left;
+             }
+
+             
+             #loadingBar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width: 100%;
+                 height: 100vh;
+                 background-color:rgba(200,200,200,0.8);
+                 -webkit-transition: all 0.5s ease;
+                 -moz-transition: all 0.5s ease;
+                 -ms-transition: all 0.5s ease;
+                 -o-transition: all 0.5s ease;
+                 transition: all 0.5s ease;
+                 opacity:1;
+             }
+
+             #bar {
+                 position:absolute;
+                 top:0px;
+                 left:0px;
+                 width:20px;
+                 height:20px;
+                 margin:auto auto auto auto;
+                 border-radius:11px;
+                 border:2px solid rgba(30,30,30,0.05);
+                 background: rgb(0, 173, 246); /* Old browsers */
+                 box-shadow: 2px 0px 4px rgba(0,0,0,0.4);
+             }
+
+             #border {
+                 position:absolute;
+                 top:10px;
+                 left:10px;
+                 width:500px;
+                 height:23px;
+                 margin:auto auto auto auto;
+                 box-shadow: 0px 0px 4px rgba(0,0,0,0.2);
+                 border-radius:10px;
+             }
+
+             #text {
+                 position:absolute;
+                 top:8px;
+                 left:530px;
+                 width:30px;
+                 height:50px;
+                 margin:auto auto auto auto;
+                 font-size:22px;
+                 color: #000000;
+             }
+
+             div.outerBorder {
+                 position:relative;
+                 top:400px;
+                 width:600px;
+                 height:44px;
+                 margin:auto auto auto auto;
+                 border:8px solid rgba(0,0,0,0.1);
+                 background: rgb(252,252,252); /* Old browsers */
+                 background: -moz-linear-gradient(top,  rgba(252,252,252,1) 0%, rgba(237,237,237,1) 100%); /* FF3.6+ */
+                 background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(252,252,252,1)), color-stop(100%,rgba(237,237,237,1))); /* Chrome,Safari4+ */
+                 background: -webkit-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Chrome10+,Safari5.1+ */
+                 background: -o-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* Opera 11.10+ */
+                 background: -ms-linear-gradient(top,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* IE10+ */
+                 background: linear-gradient(to bottom,  rgba(252,252,252,1) 0%,rgba(237,237,237,1) 100%); /* W3C */
+                 filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#fcfcfc', endColorstr='#ededed',GradientType=0 ); /* IE6-9 */
+                 border-radius:72px;
+                 box-shadow: 0px 0px 10px rgba(0,0,0,0.2);
+             }
+             
+
+             
+
+             
+        </style>
+    </head>
+
+
+    <body>
+        <div class="card" style="width: 100%">
+            
+                <div id="select-menu" class="card-header">
+                    <div class="row no-gutters">
+                        <div class="col-10 pb-2">
+                            <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="selectNode([value]);"
+                            id="select-node"
+                            placeholder="Select node..."
+                            >
+                                <option selected>Select a Node by ID</option>
+                                
+                                    <option value="Sapota">Sapota</option>
+                                
+                                    <option value="M_Cebula">M_Cebula</option>
+                                
+                                    <option value="I_Cebula">I_Cebula</option>
+                                
+                                    <option value="£uczak">£uczak</option>
+                                
+                                    <option value="Chilarzewski">Chilarzewski</option>
+                                
+                                    <option value="Tofel">Tofel</option>
+                                
+                                    <option value="Kurylak">Kurylak</option>
+                                
+                                    <option value="Borysiak">Borysiak</option>
+                                
+                                    <option value="HREIT S.A.">HREIT S.A.</option>
+                                
+                                    <option value="HRE INVESTMENTS SP. K.">HRE INVESTMENTS SP. K.</option>
+                                
+                                    <option value="HRE INVESTMENTS SP. Z O.O.">HRE INVESTMENTS SP. Z O.O.</option>
+                                
+                                    <option value="EQ REAL ESTATE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">EQ REAL ESTATE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="PARTNER SERVICES SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">PARTNER SERVICES SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="HREI CONCRETE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">HREI CONCRETE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="APARTAMENTY TUWIMA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">APARTAMENTY TUWIMA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="HRE PROJEKT 1 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">HRE PROJEKT 1 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="FC FINANCE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">FC FINANCE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="APARTAMENTY BARONA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">APARTAMENTY BARONA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="BARONA GARDENS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">BARONA GARDENS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="OPOLE PRIME RESIDENCE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">OPOLE PRIME RESIDENCE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="MAKS BOND SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">MAKS BOND SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="LEON BOND SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">LEON BOND SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="LAURA BOND SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">LAURA BOND SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="EMMA BOND SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">EMMA BOND SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="JULIA BOND SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">JULIA BOND SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="SOUTH STAR DEVELOPMENT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">SOUTH STAR DEVELOPMENT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="NORTH STAR DEVELOPMENT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">NORTH STAR DEVELOPMENT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="WEST STAR DEVELOPMENT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">WEST STAR DEVELOPMENT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="BLACK STAR HOLDING SP”£KA AKCYJNA">BLACK STAR HOLDING SP”£KA AKCYJNA</option>
+                                
+                                    <option value="APARTAMENTY CEGIELNIANA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">APARTAMENTY CEGIELNIANA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="APARTAMENTY DOBRZA—SKIEGO SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">APARTAMENTY DOBRZA—SKIEGO SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="APARTAMENTY FORMELI 17 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">APARTAMENTY FORMELI 17 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="APARTAMENTY KROGULSKIEGO SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">APARTAMENTY KROGULSKIEGO SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="APARTAMENTY MERLINIEGO SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">APARTAMENTY MERLINIEGO SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="APARTAMENTY M£YN”WKA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">APARTAMENTY M£YN”WKA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="APARTAMENTY MOKRZA—SKIE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">APARTAMENTY MOKRZA—SKIE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="APARTAMENTY NA WSP”LNEJ SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">APARTAMENTY NA WSP”LNEJ SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="APARTAMENTY PARKOVA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">APARTAMENTY PARKOVA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="APARTAMENTY PRUSA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">APARTAMENTY PRUSA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="APARTAMENTY SENATORSKA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">APARTAMENTY SENATORSKA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="APARTAMENTY SILVER SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">APARTAMENTY SILVER SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="APARTAMENTY SKARBKA Z G”R SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">APARTAMENTY SKARBKA Z G”R SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="APARTAMENTY S£OWACKIEGO SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">APARTAMENTY S£OWACKIEGO SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="APARTAMENTY STACYJNA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">APARTAMENTY STACYJNA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="APARTAMENTY STAROPOLSKIE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">APARTAMENTY STAROPOLSKIE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="APARTAMENTY WIELISZEW SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">APARTAMENTY WIELISZEW SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="APARTAMENTY ZI TKA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">APARTAMENTY ZI TKA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="APARTAMENTY ZI TKA II SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">APARTAMENTY ZI TKA II SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="BDC DEVELOPMENT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">BDC DEVELOPMENT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="BDC DEVELOPMENT II SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">BDC DEVELOPMENT II SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="CHORZOWSKA SKY SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">CHORZOWSKA SKY SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="D•BROWSKIEGO 8 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">D•BROWSKIEGO 8 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="D•BROWSKIEGO 54 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">D•BROWSKIEGO 54 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="D BOWY PARK III SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">D BOWY PARK III SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="D BOWY PARK V SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">D BOWY PARK V SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="D BOWY PARK VI SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">D BOWY PARK VI SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="ECO CITY WROC£AW SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">ECO CITY WROC£AW SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="EQRE PARTNERS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">EQRE PARTNERS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="GLIWICE D•BROWSKIEGO SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">GLIWICE D•BROWSKIEGO SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="KATOWICE RZEPAKOWA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">KATOWICE RZEPAKOWA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="KRAK”W PACHO—SKIEGO SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">KRAK”W PACHO—SKIEGO SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="KRAK”W PACHO—SKIEGO 2 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">KRAK”W PACHO—SKIEGO 2 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="LAKE HOUSE 2 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">LAKE HOUSE 2 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="LAKE HOUSE ZEGRZE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">LAKE HOUSE ZEGRZE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="£”Dè KILI—SKIEGO SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">£”Dè KILI—SKIEGO SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="£”Dè BA£UTY SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">£”Dè BA£UTY SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="£OZOWA 48 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">£OZOWA 48 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="MANHATTAN PRUSZK”W SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">MANHATTAN PRUSZK”W SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="NOVA FORMELI 17 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">NOVA FORMELI 17 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="NOVA WARSZAWSKA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">NOVA WARSZAWSKA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="ORTEL MANAGEMENT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">ORTEL MANAGEMENT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="PARK CITY SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">PARK CITY SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="PARKOWA åWIDNICA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">PARKOWA åWIDNICA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="POZNA— SK”RZEWO SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">POZNA— SK”RZEWO SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="POZNA— WAGROWSKA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">POZNA— WAGROWSKA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="PROJEKT EQUITY 29 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">PROJEKT EQUITY 29 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="PROJEKT EQUITY 36 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">PROJEKT EQUITY 36 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="RESOVIA SKY SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">RESOVIA SKY SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="RUMIA WIEJSKA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">RUMIA WIEJSKA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="RZESZ”W KROGULSKIEGO SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">RZESZ”W KROGULSKIEGO SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="SIKORSKIEGO 36 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">SIKORSKIEGO 36 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="SOSNOWIEC OSTROG”RSKA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">SOSNOWIEC OSTROG”RSKA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="TOWARZYSTWO BUDOWNICTWA SPO£ECZNEHO HREIT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">TOWARZYSTWO BUDOWNICTWA SPO£ECZNEHO HREIT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="TRUST X SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">TRUST X SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="TUWIMA GARDENS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">TUWIMA GARDENS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="TUWIMA GARDENS 1 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">TUWIMA GARDENS 1 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="TUWIMA SKY SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">TUWIMA SKY SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="WARSZAWSKA 1 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">WARSZAWSKA 1 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="WARSZAWSKA 2 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">WARSZAWSKA 2 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="WARSZAWSKA 4 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">WARSZAWSKA 4 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="WARSZAWSKA SKY 3 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">WARSZAWSKA SKY 3 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="WROC£AW BIE—KOWICE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">WROC£AW BIE—KOWICE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="WROC£AW ZACHARZYCE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">WROC£AW ZACHARZYCE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="ZIELONY WROC£AW SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">ZIELONY WROC£AW SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="Z£OTA 1 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">Z£OTA 1 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="Z£OTA 2 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">Z£OTA 2 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="TTANK SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">TTANK SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="MIESZKANIE.PL FINANSE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">MIESZKANIE.PL FINANSE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="HRE SPORT TEAM SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">HRE SPORT TEAM SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="HRE NEXT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">HRE NEXT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="GROWWE.PL SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">GROWWE.PL SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="MIESZKANIE.PL SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">MIESZKANIE.PL SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="FUNDACJA HRE THINK-TANK">FUNDACJA HRE THINK-TANK</option>
+                                
+                                    <option value="HERITAGE MANAGEMENT SPORTS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">HERITAGE MANAGEMENT SPORTS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="HRE GAMMA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">HRE GAMMA SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="TRUST X FINANCE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">TRUST X FINANCE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="HERITAGE REAL ESTATE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">HERITAGE REAL ESTATE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="HREI PARTNERS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">HREI PARTNERS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="ESTATE RESULT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">ESTATE RESULT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="PARK SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">PARK SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="PRIME RESIDENCE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">PRIME RESIDENCE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="MLK GROUP INVESTMENT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">MLK GROUP INVESTMENT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="FOTOPLASTIKON SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">FOTOPLASTIKON SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="KOLIMILL INVESTMENTS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">KOLIMILL INVESTMENTS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="CHL HOLDING SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">CHL HOLDING SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="KADVISORY SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">KADVISORY SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="HRE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">HRE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="HRE RS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI">HRE RS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI</option>
+                                
+                                    <option value="HRE TRUST SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">HRE TRUST SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="HREIT SSC SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">HREIT SSC SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="HRE SSC SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">HRE SSC SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="GW HREIT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">GW HREIT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="HRE PROJEKT 2 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">HRE PROJEKT 2 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="HREIT HRE INVESTMENTS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">HREIT HRE INVESTMENTS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="GW HRE INVESTMENTS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">GW HRE INVESTMENTS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="HREI CONCRETE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI• WALLS">HREI CONCRETE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI• WALLS</option>
+                                
+                                    <option value="HREI CONCRETE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI• CEILINGS">HREI CONCRETE SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI• CEILINGS</option>
+                                
+                                    <option value="DELTA HRE INVESTMENTS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">DELTA HRE INVESTMENTS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="HF HRE INVESTMENTS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">HF HRE INVESTMENTS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="ETA HRE INVESTMENTS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">ETA HRE INVESTMENTS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="DZETA HRE INVESTMENTS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">DZETA HRE INVESTMENTS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="EPSILON HRE INVESTMENTS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">EPSILON HRE INVESTMENTS SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="ALEF ORTEL MANAGEMENT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">ALEF ORTEL MANAGEMENT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="BET ORTEL MANAGEMENT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">BET ORTEL MANAGEMENT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="FORMELI 7 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">FORMELI 7 SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="AURENT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">AURENT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                                    <option value="BAUMAT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•">BAUMAT SP”£KA Z OGRANICZON• ODPOWIEDZIALNOåCI•</option>
+                                
+                            </select>
+                        </div>
+                        <div class="col-2 pb-2">
+                            <button type="button" class="btn btn-primary btn-block" onclick="neighbourhoodHighlight({nodes: []});">Reset Selection</button>
+                        </div>
+                    </div>
+                </div>
+            
+            
+              <div id="filter-menu" class="card-header">
+                <div class="row no-gutters">
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="updateFilter(value, 'item')"
+                            id="select-item"
+                        >
+                        <option value="">Select a network item</option>
+                        <option value="edge">edge</option>
+                        <option value="node">node</option>
+                    </select>
+                  </div>
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            onchange="updateFilter(value, 'property')"
+                            id="select-property"
+                        >
+                        <option value="">Select a property...</option>
+                    </select>
+                  </div>
+                  <div class="col-3 pb-2">
+                    <select
+                            class="form-select"
+                            aria-label="Default select example"
+                            id="select-value"
+                        >
+                        <option value="">Select value(s)...</option>
+                    </select>
+                  </div>
+                  <div class="col-1 pb-2">
+                    <button type="button" class="btn btn-primary btn-block" onclick="highlightFilter(filter);">Filter</button>
+                  </div>
+                  <div class="col-2 pb-2">
+                    <button type="button" class="btn btn-primary btn-block" onclick="clearFilter(true)">Reset Selection</button>
+                  </div>
+                </div>
+              </div>
+            
+            <div id="mynetwork" class="card-body"></div>
+        </div>
+
+        
+            <div id="loadingBar">
+              <div class="outerBorder">
+                <div id="text">0%</div>
+                <div id="border">
+                  <div id="bar"></div>
+                </div>
+              </div>
+            </div>
+        
+        
+
+        <script type="text/javascript">
+
+              // initialize global variables.
+              var edges;
+              var nodes;
+              var allNodes;
+              var allEdges;
+              var nodeColors;
+              var originalNodes;
+              var network;
+              var container;
+              var options, data;
+              var filter = {
+                  item : '',
+                  property : '',
+                  value : []
+              };
+
+              
+                  new TomSelect("#select-node",{
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      }
+                  });
+              
+
+              
+                  // explicitly using onItemAdd and this function as we need to save multiple values
+                  let updateValueFilter = function() {
+                      return function () {
+                      filter['value'].push(arguments[0])
+                      }
+                  }
+
+                  let valueControl = new TomSelect("#select-value",{
+                      maxItems: null,
+                      valueField: 'id',
+                      labelField: 'title',
+                      searchField: 'title',
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: updateValueFilter()
+                  });
+
+                  let addValues = function() {
+                      return function () {
+                          // clear the current value options and add the selected attribute values
+                          // tom-select handles duplicates
+                          let selectedProperty = arguments[0];
+                          valueControl.clear();
+                          valueControl.clearOptions();
+                          filter['value'] = []
+                          if (filter['item'] === 'node') {
+                              for (let each in allNodes) {
+                                  valueControl.addOption({
+                                      id:allNodes[each][selectedProperty],
+                                      title:allNodes[each][selectedProperty]
+                                  })
+                              }
+                          }
+                          else if (filter['item'] === 'edge') {
+                              for (let each in allEdges) {
+                                  valueControl.addOption({
+                                      id:allEdges[each][selectedProperty],
+                                      title:allEdges[each][selectedProperty]
+                                  })
+                              }
+                          }
+                      }
+                  };
+
+                  let propControl = new TomSelect("#select-property",{
+                      valueField: 'id',
+                      labelField: 'title',
+                      searchField: 'title',
+                      create: false,
+                      sortField: {
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: addValues()
+                  });
+
+                  let addProperties = function() {
+                      return function () {
+                          // loops through the selected network item and adds the attributes to dropdown
+                          // tom-select handles duplicates
+                          clearFilter(false)
+                          if (arguments[0] === 'edge') {
+                              for (let each in allEdges) {
+                                  if (allEdges.hasOwnProperty(each)) {
+                                      for (let eachProp in allEdges[each]) {
+                                          if (allEdges[each].hasOwnProperty(eachProp)) {
+                                              propControl.addOption({id: eachProp, title: eachProp})
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                          else if (arguments[0] === 'node') {
+                              for (let each in allNodes) {
+                                  if (allNodes.hasOwnProperty(each)) {
+                                      for (let eachProp in allNodes[each]) {
+                                          if (allNodes[each].hasOwnProperty(eachProp)
+                                              && (eachProp !== 'hidden' && eachProp !== 'savedLabel'
+                                                  && eachProp !== 'hiddenLabel')) {
+                                              propControl.addOption({id: eachProp, title: eachProp})
+
+                                          }
+                                      }
+                                  }
+                              }
+                          }
+                      }
+                  };
+
+                  let itemControl = new TomSelect("#select-item",{
+                      create: false,
+                      sortField:{
+                          field: "text",
+                          direction: "asc"
+                      },
+                      onItemAdd: addProperties()
+                  });
+
+                  function clearFilter(reset) {
+                      // utility function to clear all the selected filter options
+                      // if reset is set to true, the existing filter will be removed
+                      // else, only the dropdown options are cleared
+                      propControl.clear();
+                      propControl.clearOptions();
+                      valueControl.clear();
+                      valueControl.clearOptions();
+                      filter = {
+                          item : '',
+                          property : '',
+                          value : []
+                      }
+                      if (reset) {
+                          itemControl.clear();
+                          filterHighlight({nodes: []})
+                      }
+                  }
+
+                  function updateFilter(value, key) {
+                      // key could be 'item' or 'property' and value is as selected in dropdown
+                      filter[key] = value
+                  }
+
+              
+
+              // This method is responsible for drawing the graph, returns the drawn network
+              function drawGraph() {
+                  var container = document.getElementById('mynetwork');
+
+                  
+
+                  // parsing and collecting nodes and edges from the python
+                  nodes = new vis.DataSet([{"color": "#3498db", "font": {"color": "white"}, "id": "Sapota", "label": "Micha\u0142 Sapota\n(Prezes HREIT)", "shape": "dot", "size": 45, "title": ""}, {"color": "#3498db", "font": {"color": "white"}, "id": "M_Cebula", "label": "Micha\u0142 Cebula\n(Wiceprezes)", "shape": "dot", "size": 40, "title": ""}, {"color": "#2980b9", "font": {"color": "white"}, "id": "I_Cebula", "label": "Iwona Cebula", "shape": "dot", "size": 25, "title": ""}, {"color": "#2980b9", "font": {"color": "white"}, "id": "\u0141uczak", "label": "Krzysztof \u0141uczak", "shape": "dot", "size": 25, "title": ""}, {"color": "#2980b9", "font": {"color": "white"}, "id": "Chilarzewski", "label": "Filip Chilarzewski", "shape": "dot", "size": 25, "title": ""}, {"color": "#3498db", "font": {"color": "white"}, "id": "Tofel", "label": "Marcin Tofel", "shape": "dot", "size": 35, "title": ""}, {"color": "#2980b9", "font": {"color": "white"}, "id": "Kurylak", "label": "Iwona Kurylak", "shape": "dot", "size": 20, "title": ""}, {"color": "#2980b9", "font": {"color": "white"}, "id": "Borysiak", "label": "Tomasz Borysiak", "shape": "dot", "size": 20, "title": ""}, {"color": "#f1c40f", "font": {"color": "white"}, "id": "HREIT S.A.", "label": "HREIT S.A.", "shape": "dot", "size": 50, "title": ""}, {"color": "#f1c40f", "font": {"color": "white"}, "id": "HRE INVESTMENTS SP. K.", "label": "HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104 SP\u00d3\u0141KA KOMANDYTOWA", "shape": "dot", "size": 50, "title": ""}, {"color": "#f1c40f", "font": {"color": "white"}, "id": "HRE INVESTMENTS SP. Z O.O.", "label": "HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 35, "title": ""}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "EQ REAL ESTATE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "EQ REAL ESTATE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104 (LIKWIDACJA)", "shape": "dot", "size": 30, "title": ""}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "PARTNER SERVICES SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "PARTNER SERVICES SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104 (LIKWIDACJA)", "shape": "dot", "size": 30, "title": ""}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "HREI CONCRETE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "HREI CONCRETE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104 (LIKWIDACJA)", "shape": "dot", "size": 30, "title": ""}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "APARTAMENTY TUWIMA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "APARTAMENTY TUWIMA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104 (UPAD\u0141O\u015a\u0106)", "shape": "dot", "size": 30, "title": ""}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "HRE PROJEKT 1 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "HRE PROJEKT 1 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104 (LIKWIDACJA)", "shape": "dot", "size": 30, "title": ""}, {"color": "#e74c3c", "font": {"color": "white"}, "id": "FC FINANCE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "FC FINANCE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104 (LIKWIDACJA)", "shape": "dot", "size": 30, "title": ""}, {"color": "#9b59b6", "font": {"color": "white"}, "id": "APARTAMENTY BARONA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "APARTAMENTY BARONA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 35, "title": ""}, {"color": "#9b59b6", "font": {"color": "white"}, "id": "BARONA GARDENS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "BARONA GARDENS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 35, "title": ""}, {"color": "#9b59b6", "font": {"color": "white"}, "id": "OPOLE PRIME RESIDENCE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "OPOLE PRIME RESIDENCE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 35, "title": ""}, {"color": "#2ecc71", "font": {"color": "white"}, "id": "MAKS BOND SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "MAKS BOND SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 22, "title": ""}, {"color": "#2ecc71", "font": {"color": "white"}, "id": "LEON BOND SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "LEON BOND SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 22, "title": ""}, {"color": "#2ecc71", "font": {"color": "white"}, "id": "LAURA BOND SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "LAURA BOND SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 22, "title": ""}, {"color": "#2ecc71", "font": {"color": "white"}, "id": "EMMA BOND SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "EMMA BOND SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 22, "title": ""}, {"color": "#2ecc71", "font": {"color": "white"}, "id": "JULIA BOND SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "JULIA BOND SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 22, "title": ""}, {"color": "#2ecc71", "font": {"color": "white"}, "id": "SOUTH STAR DEVELOPMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "SOUTH STAR DEVELOPMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 22, "title": ""}, {"color": "#2ecc71", "font": {"color": "white"}, "id": "NORTH STAR DEVELOPMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "NORTH STAR DEVELOPMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 22, "title": ""}, {"color": "#2ecc71", "font": {"color": "white"}, "id": "WEST STAR DEVELOPMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "WEST STAR DEVELOPMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 22, "title": ""}, {"color": "#2ecc71", "font": {"color": "white"}, "id": "BLACK STAR HOLDING SP\u00d3\u0141KA AKCYJNA", "label": "BLACK STAR HOLDING SP\u00d3\u0141KA AKCYJNA", "shape": "dot", "size": 22, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "APARTAMENTY CEGIELNIANA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "APARTAMENTY CEGIELNIANA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "APARTAMENTY DOBRZA\u0143SKIEGO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "APARTAMENTY DOBRZA\u0143SKIEGO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "APARTAMENTY FORMELI 17 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "APARTAMENTY FORMELI 17 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "APARTAMENTY KROGULSKIEGO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "APARTAMENTY KROGULSKIEGO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "APARTAMENTY MERLINIEGO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "APARTAMENTY MERLINIEGO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "APARTAMENTY M\u0141YN\u00d3WKA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "APARTAMENTY M\u0141YN\u00d3WKA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "APARTAMENTY MOKRZA\u0143SKIE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "APARTAMENTY MOKRZA\u0143SKIE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "APARTAMENTY NA WSP\u00d3LNEJ SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "APARTAMENTY NA WSP\u00d3LNEJ SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "APARTAMENTY PARKOVA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "APARTAMENTY PARKOVA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "APARTAMENTY PRUSA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "APARTAMENTY PRUSA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "APARTAMENTY SENATORSKA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "APARTAMENTY SENATORSKA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "APARTAMENTY SILVER SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "APARTAMENTY SILVER SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "APARTAMENTY SKARBKA Z G\u00d3R SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "APARTAMENTY SKARBKA Z G\u00d3R SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "APARTAMENTY S\u0141OWACKIEGO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "APARTAMENTY S\u0141OWACKIEGO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "APARTAMENTY STACYJNA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "APARTAMENTY STACYJNA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "APARTAMENTY STAROPOLSKIE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "APARTAMENTY STAROPOLSKIE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "APARTAMENTY WIELISZEW SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "APARTAMENTY WIELISZEW SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "APARTAMENTY ZI\u0118TKA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "APARTAMENTY ZI\u0118TKA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "APARTAMENTY ZI\u0118TKA II SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "APARTAMENTY ZI\u0118TKA II SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "BDC DEVELOPMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "BDC DEVELOPMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "BDC DEVELOPMENT II SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "BDC DEVELOPMENT II SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "CHORZOWSKA SKY SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "CHORZOWSKA SKY SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "D\u0104BROWSKIEGO 8 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "D\u0104BROWSKIEGO 8 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "D\u0104BROWSKIEGO 54 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "D\u0104BROWSKIEGO 54 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "D\u0118BOWY PARK III SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "D\u0118BOWY PARK III SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "D\u0118BOWY PARK V SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "D\u0118BOWY PARK V SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "D\u0118BOWY PARK VI SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "D\u0118BOWY PARK VI SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "ECO CITY WROC\u0141AW SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "ECO CITY WROC\u0141AW SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "EQRE PARTNERS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "EQRE PARTNERS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "GLIWICE D\u0104BROWSKIEGO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "GLIWICE D\u0104BROWSKIEGO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "KATOWICE RZEPAKOWA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "KATOWICE RZEPAKOWA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "KRAK\u00d3W PACHO\u0143SKIEGO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "KRAK\u00d3W PACHO\u0143SKIEGO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "KRAK\u00d3W PACHO\u0143SKIEGO 2 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "KRAK\u00d3W PACHO\u0143SKIEGO 2 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "LAKE HOUSE 2 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "LAKE HOUSE 2 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "LAKE HOUSE ZEGRZE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "LAKE HOUSE ZEGRZE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "\u0141\u00d3D\u0179 KILI\u0143SKIEGO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "\u0141\u00d3D\u0179 KILI\u0143SKIEGO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "\u0141\u00d3D\u0179 BA\u0141UTY SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "\u0141\u00d3D\u0179 BA\u0141UTY SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "\u0141OZOWA 48 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "\u0141OZOWA 48 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "MANHATTAN PRUSZK\u00d3W SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "MANHATTAN PRUSZK\u00d3W SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "NOVA FORMELI 17 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "NOVA FORMELI 17 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "NOVA WARSZAWSKA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "NOVA WARSZAWSKA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "ORTEL MANAGEMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "ORTEL MANAGEMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "PARK CITY SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "PARK CITY SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "PARKOWA \u015aWIDNICA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "PARKOWA \u015aWIDNICA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "POZNA\u0143 SK\u00d3RZEWO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "POZNA\u0143 SK\u00d3RZEWO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "POZNA\u0143 WAGROWSKA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "POZNA\u0143 WAGROWSKA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "PROJEKT EQUITY 29 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "PROJEKT EQUITY 29 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "PROJEKT EQUITY 36 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "PROJEKT EQUITY 36 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "RESOVIA SKY SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "RESOVIA SKY SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "RUMIA WIEJSKA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "RUMIA WIEJSKA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "RZESZ\u00d3W KROGULSKIEGO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "RZESZ\u00d3W KROGULSKIEGO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "SIKORSKIEGO 36 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "SIKORSKIEGO 36 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "SOSNOWIEC OSTROG\u00d3RSKA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "SOSNOWIEC OSTROG\u00d3RSKA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "TOWARZYSTWO BUDOWNICTWA SPO\u0141ECZNEHO HREIT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "TOWARZYSTWO BUDOWNICTWA SPO\u0141ECZNEHO HREIT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "TRUST X SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "TRUST X SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "TUWIMA GARDENS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "TUWIMA GARDENS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "TUWIMA GARDENS 1 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "TUWIMA GARDENS 1 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "TUWIMA SKY SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "TUWIMA SKY SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "WARSZAWSKA 1 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "WARSZAWSKA 1 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "WARSZAWSKA 2 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "WARSZAWSKA 2 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "WARSZAWSKA 4 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "WARSZAWSKA 4 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "WARSZAWSKA SKY 3 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "WARSZAWSKA SKY 3 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "WROC\u0141AW BIE\u0143KOWICE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "WROC\u0141AW BIE\u0143KOWICE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "WROC\u0141AW ZACHARZYCE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "WROC\u0141AW ZACHARZYCE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "ZIELONY WROC\u0141AW SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "ZIELONY WROC\u0141AW SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "Z\u0141OTA 1 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "Z\u0141OTA 1 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "Z\u0141OTA 2 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "Z\u0141OTA 2 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "TTANK SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "TTANK SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "MIESZKANIE.PL FINANSE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "MIESZKANIE.PL FINANSE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "HRE SPORT TEAM SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "HRE SPORT TEAM SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "HRE NEXT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "HRE NEXT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "GROWWE.PL SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "GROWWE.PL SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "MIESZKANIE.PL SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "MIESZKANIE.PL SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "FUNDACJA HRE THINK-TANK", "label": "FUNDACJA HRE THINK-TANK", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "HERITAGE MANAGEMENT SPORTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "HERITAGE MANAGEMENT SPORTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "HRE GAMMA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "HRE GAMMA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "TRUST X FINANCE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "TRUST X FINANCE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "HERITAGE REAL ESTATE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "HERITAGE REAL ESTATE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "HREI PARTNERS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "HREI PARTNERS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "ESTATE RESULT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "ESTATE RESULT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "PARK SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "PARK SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "PRIME RESIDENCE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "PRIME RESIDENCE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "MLK GROUP INVESTMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "MLK GROUP INVESTMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "FOTOPLASTIKON SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "FOTOPLASTIKON SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "KOLIMILL INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "KOLIMILL INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "CHL HOLDING SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "CHL HOLDING SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "KADVISORY SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "KADVISORY SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "HRE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "HRE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "HRE RS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI", "label": "HRE RS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "HRE TRUST SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "HRE TRUST SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "HREIT SSC SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "HREIT SSC SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "HRE SSC SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "HRE SSC SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "GW HREIT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "GW HREIT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "HRE PROJEKT 2 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "HRE PROJEKT 2 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "HREIT HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "HREIT HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "GW HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "GW HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "HREI CONCRETE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104 WALLS", "label": "HREI CONCRETE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104 WALLS", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "HREI CONCRETE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104 CEILINGS", "label": "HREI CONCRETE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104 CEILINGS", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "DELTA HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "DELTA HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "HF HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "HF HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "ETA HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "ETA HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "DZETA HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "DZETA HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "EPSILON HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "EPSILON HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "ALEF ORTEL MANAGEMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "ALEF ORTEL MANAGEMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "BET ORTEL MANAGEMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "BET ORTEL MANAGEMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "FORMELI 7 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "FORMELI 7 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "AURENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "AURENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}, {"color": "#7f8c8d", "font": {"color": "white"}, "id": "BAUMAT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "label": "BAUMAT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104", "shape": "dot", "size": 14, "title": ""}]);
+                  edges = new vis.DataSet([{"color": "#444444", "from": "Sapota", "label": "Prezes Zarz\u0105du", "title": "Prezes Zarz\u0105du", "to": "HREIT S.A."}, {"color": "#444444", "from": "Sapota", "label": "Komandytariusz / Udzia\u0142owiec", "title": "Komandytariusz / Udzia\u0142owiec", "to": "HRE INVESTMENTS SP. K."}, {"color": "#444444", "from": "Sapota", "label": "Prezes Zarz\u0105du", "title": "Prezes Zarz\u0105du", "to": "APARTAMENTY BARONA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes Zarz\u0105du", "title": "Prezes Zarz\u0105du", "to": "BARONA GARDENS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Likwidator", "title": "Likwidator", "to": "EQ REAL ESTATE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Likwidator", "title": "Likwidator", "to": "PARTNER SERVICES SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Likwidator", "title": "Likwidator", "to": "HREI CONCRETE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Udzia\u0142owiec", "title": "Udzia\u0142owiec", "to": "APARTAMENTY TUWIMA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "APARTAMENTY CEGIELNIANA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "APARTAMENTY DOBRZA\u0143SKIEGO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "APARTAMENTY FORMELI 17 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "APARTAMENTY KROGULSKIEGO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "APARTAMENTY MERLINIEGO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "APARTAMENTY M\u0141YN\u00d3WKA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "APARTAMENTY MOKRZA\u0143SKIE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "APARTAMENTY NA WSP\u00d3LNEJ SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "APARTAMENTY PARKOVA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "APARTAMENTY PRUSA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "APARTAMENTY SENATORSKA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "APARTAMENTY SILVER SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "APARTAMENTY SKARBKA Z G\u00d3R SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "APARTAMENTY S\u0141OWACKIEGO SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "APARTAMENTY STACYJNA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "APARTAMENTY STAROPOLSKIE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "APARTAMENTY WIELISZEW SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "APARTAMENTY ZI\u0118TKA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "APARTAMENTY ZI\u0118TKA II SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "CHORZOWSKA SKY SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "D\u0118BOWY PARK III SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "D\u0118BOWY PARK V SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "D\u0118BOWY PARK VI SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "ECO CITY WROC\u0141AW SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "RESOVIA SKY SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "TUWIMA SKY SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "WARSZAWSKA SKY 3 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "WROC\u0141AW BIE\u0143KOWICE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "WROC\u0141AW ZACHARZYCE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Prezes / UBO", "title": "Prezes / UBO", "to": "ZIELONY WROC\u0141AW SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Beneficjent Rzeczywisty (UBO)", "title": "Beneficjent Rzeczywisty (UBO)", "to": "MAKS BOND SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Beneficjent Rzeczywisty (UBO)", "title": "Beneficjent Rzeczywisty (UBO)", "to": "LEON BOND SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Beneficjent Rzeczywisty (UBO)", "title": "Beneficjent Rzeczywisty (UBO)", "to": "LAURA BOND SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Beneficjent Rzeczywisty (UBO)", "title": "Beneficjent Rzeczywisty (UBO)", "to": "EMMA BOND SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Beneficjent Rzeczywisty (UBO)", "title": "Beneficjent Rzeczywisty (UBO)", "to": "JULIA BOND SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Beneficjent Rzeczywisty (UBO)", "title": "Beneficjent Rzeczywisty (UBO)", "to": "SOUTH STAR DEVELOPMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Beneficjent Rzeczywisty (UBO)", "title": "Beneficjent Rzeczywisty (UBO)", "to": "NORTH STAR DEVELOPMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Beneficjent Rzeczywisty (UBO)", "title": "Beneficjent Rzeczywisty (UBO)", "to": "WEST STAR DEVELOPMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Beneficjent Rzeczywisty (UBO)", "title": "Beneficjent Rzeczywisty (UBO)", "to": "BLACK STAR HOLDING SP\u00d3\u0141KA AKCYJNA"}, {"color": "#444444", "from": "Sapota", "label": "Nadz\u00f3r", "title": "Nadz\u00f3r", "to": "HRE NEXT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Nadz\u00f3r", "title": "Nadz\u00f3r", "to": "HERITAGE REAL ESTATE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Sapota", "label": "Wiceprezes", "title": "Wiceprezes", "to": "FUNDACJA HRE THINK-TANK"}, {"color": "#444444", "from": "M_Cebula", "label": "Wiceprezes Zarz\u0105du", "title": "Wiceprezes Zarz\u0105du", "to": "HRE INVESTMENTS SP. Z O.O."}, {"color": "#444444", "from": "M_Cebula", "label": "Komandytariusz (Wk\u0142ad 4.000 Z\u0141)", "title": "Komandytariusz (Wk\u0142ad 4.000 Z\u0141)", "to": "HRE INVESTMENTS SP. K."}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "APARTAMENTY BARONA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "BARONA GARDENS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "W\u0142asno\u015b\u0107", "title": "W\u0142asno\u015b\u0107", "to": "APARTAMENTY TUWIMA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "Zarz\u0105d", "title": "Zarz\u0105d", "to": "TTANK SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "Zarz\u0105d", "title": "Zarz\u0105d", "to": "MIESZKANIE.PL SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "Zarz\u0105d", "title": "Zarz\u0105d", "to": "FUNDACJA HRE THINK-TANK"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "APARTAMENTY FORMELI 17 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "BDC DEVELOPMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "BDC DEVELOPMENT II SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "NOVA FORMELI 17 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "ORTEL MANAGEMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "TOWARZYSTWO BUDOWNICTWA SPO\u0141ECZNEHO HREIT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "HRE SPORT TEAM SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "HRE NEXT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "HRE GAMMA SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "HREI PARTNERS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "HRE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "HRE RS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "HRE TRUST SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "HREIT SSC SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "HRE SSC SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "GW HREIT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "HRE PROJEKT 2 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "HREIT HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "GW HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "HREI CONCRETE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104 WALLS"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "HREI CONCRETE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104 CEILINGS"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "DELTA HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "HF HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "ETA HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "DZETA HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "EPSILON HRE INVESTMENTS SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "ALEF ORTEL MANAGEMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "BET ORTEL MANAGEMENT SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "M_Cebula", "label": "UBO", "title": "UBO", "to": "FORMELI 7 SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "I_Cebula", "label": "Aport: 5.1M Z\u0141", "title": "Aport: 5.1M Z\u0141", "to": "HRE INVESTMENTS SP. K."}, {"color": "#444444", "from": "I_Cebula", "label": "UBO", "title": "UBO", "to": "HREIT S.A."}, {"color": "#444444", "from": "\u0141uczak", "label": "Aport: 4.95M Z\u0141", "title": "Aport: 4.95M Z\u0141", "to": "HRE INVESTMENTS SP. K."}, {"color": "#444444", "from": "\u0141uczak", "label": "UBO", "title": "UBO", "to": "HREIT S.A."}, {"color": "#444444", "from": "Chilarzewski", "label": "Aport: 4.95M Z\u0141", "title": "Aport: 4.95M Z\u0141", "to": "HRE INVESTMENTS SP. K."}, {"color": "#444444", "from": "Chilarzewski", "label": "UBO", "title": "UBO", "to": "HREIT S.A."}, {"color": "#444444", "from": "Tofel", "label": "Za\u0142o\u017cyciel (100% akcji)", "title": "Za\u0142o\u017cyciel (100% akcji)", "to": "HREIT S.A."}, {"color": "#444444", "from": "Tofel", "label": "UBO / Prokurent", "title": "UBO / Prokurent", "to": "OPOLE PRIME RESIDENCE SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Tofel", "label": "Zarz\u0105d", "title": "Zarz\u0105d", "to": "PARK SP\u00d3\u0141KA Z OGRANICZON\u0104 ODPOWIEDZIALNO\u015aCI\u0104"}, {"color": "#444444", "from": "Kurylak", "label": "Wk\u0142ad 300 Z\u0141", "title": "Wk\u0142ad 300 Z\u0141", "to": "HRE INVESTMENTS SP. K."}, {"color": "#444444", "from": "Kurylak", "label": "By\u0142y Nadz\u00f3r", "title": "By\u0142y Nadz\u00f3r", "to": "HREIT S.A."}, {"color": "#444444", "from": "Borysiak", "label": "Historyczny I Prezes", "title": "Historyczny I Prezes", "to": "HREIT S.A."}]);
+
+                  nodeColors = {};
+                  allNodes = nodes.get({ returnType: "Object" });
+                  for (nodeId in allNodes) {
+                    nodeColors[nodeId] = allNodes[nodeId].color;
+                  }
+                  allEdges = edges.get({ returnType: "Object" });
+                  // adding nodes and edges to the graph
+                  data = {nodes: nodes, edges: edges};
+
+                  var options = {
+    "configure": {
+        "enabled": false
+    },
+    "edges": {
+        "color": {
+            "inherit": true
+        },
+        "smooth": {
+            "enabled": true,
+            "type": "dynamic"
+        }
+    },
+    "interaction": {
+        "dragNodes": true,
+        "hideEdgesOnDrag": false,
+        "hideNodesOnDrag": false
+    },
+    "physics": {
+        "enabled": true,
+        "forceAtlas2Based": {
+            "avoidOverlap": 0,
+            "centralGravity": 0.01,
+            "damping": 0.5,
+            "gravitationalConstant": -40,
+            "springConstant": 0.04,
+            "springLength": 150
+        },
+        "solver": "forceAtlas2Based",
+        "stabilization": {
+            "enabled": true,
+            "fit": true,
+            "iterations": 1000,
+            "onlyDynamicEdges": false,
+            "updateInterval": 50
+        }
+    }
+};
+
+                  
+
+
+                  
+
+                  network = new vis.Network(container, data, options);
+
+                  
+
+                  
+                    network.on("selectNode", neighbourhoodHighlight);
+                  
+
+                  
+
+
+                  
+                      network.on("stabilizationProgress", function(params) {
+                          document.getElementById('loadingBar').removeAttribute("style");
+                          var maxWidth = 496;
+                          var minWidth = 20;
+                          var widthFactor = params.iterations/params.total;
+                          var width = Math.max(minWidth,maxWidth * widthFactor);
+                          document.getElementById('bar').style.width = width + 'px';
+                          document.getElementById('text').innerHTML = Math.round(widthFactor*100) + '%';
+                      });
+                      network.once("stabilizationIterationsDone", function() {
+                          document.getElementById('text').innerHTML = '100%';
+                          document.getElementById('bar').style.width = '496px';
+                          document.getElementById('loadingBar').style.opacity = 0;
+                          // really clean the dom element
+                          setTimeout(function () {document.getElementById('loadingBar').style.display = 'none';}, 500);
+                      });
+                  
+
+                  return network;
+
+              }
+              drawGraph();
+        </script>
+    </body>
+</html>
